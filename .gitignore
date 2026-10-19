@@ -13,3 +13,4 @@ powerbi/**/.pbi/localSettings.json
 powerbi/**/.pbi/cache.abf
 powerbi/validar/bin/
 powerbi/validar/obj/
+dbt/.user.yml
