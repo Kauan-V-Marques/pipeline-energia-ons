@@ -1,0 +1,74 @@
+name: pipeline
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 5 * *" # todo dia 5, para pegar os dados novos do ONS
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -e ".[dev]"
+
+      - name: Lint (ruff)
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Testes unitários
+        run: pytest -v
+
+      - name: Pipeline completo (extração + dbt build com testes de qualidade + exportação + relatório)
+        run: python -m pipeline
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Valida o modelo do Power BI (TMDL) com a biblioteca oficial da Microsoft
+        working-directory: powerbi/validar
+        run: dotnet run
+
+      - name: Script da Exibição TMDL em dia com o modelo
+        run: |
+          python powerbi/gerar_script_tmdl.py
+          git diff --exit-code powerbi/script-tmdl-view.tmdl
+
+      - name: Publica os dados atualizados (execução agendada)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add powerbi/dados dbt/seeds/feriados.csv
+          git diff --cached --quiet || git commit -m "Dados do ONS atualizados" && git push
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: site
+
+  relatorio:
+    if: github.ref == 'refs/heads/main'
+    needs: pipeline
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
