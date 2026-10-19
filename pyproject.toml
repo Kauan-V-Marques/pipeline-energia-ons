@@ -1,0 +1,36 @@
+[project]
+name = "pipeline-energia-ons"
+version = "1.0.0"
+description = "Pipeline de dados da carga de energia do Brasil (ONS): extracao, dbt + DuckDB, testes de qualidade, Power BI e relatorio web"
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb>=1.1,<2",
+    "dbt-core>=1.10,<2",
+    "dbt-duckdb>=1.10,<2",
+    "plotly>=6,<8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "ruff>=0.8"]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["pipeline*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["dbt"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Template HTML/CSS do relatório: quebrar as linhas só atrapalharia a leitura
+"pipeline/relatorio.py" = ["E501"]
