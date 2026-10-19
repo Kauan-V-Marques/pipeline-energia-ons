@@ -1,0 +1,30 @@
+name: energia
+version: "1.0.0"
+profile: energia
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+vars:
+  pasta_raw: "../dados/raw"
+  ano_inicio: 2016
+  ano_fim: 2025
+  # Acima disso o pipeline falha: muitas horas estimadas indicam problema na origem
+  max_horas_imputadas: 100
+
+models:
+  energia:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  energia:
+    +schema: seeds
+    feriados:
+      +column_types: { data: date, nome: varchar, tipo: varchar }

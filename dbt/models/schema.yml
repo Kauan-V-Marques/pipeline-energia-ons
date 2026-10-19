@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: stg_carga_horaria
+    description: Curva de carga horária do ONS tipada, sem duplicatas e com lacunas preenchidas.
+    columns:
+      - name: id_subsistema
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["N", "NE", "S", "SE"]
+      - name: data_hora
+        data_tests: [not_null]
+      - name: carga_mwmed
+        description: Carga média na hora (MWmed). Nula só se faltarem duas horas seguidas na origem.
+        data_tests: [not_null]
+
+  - name: dim_calendario
+    description: Um dia por linha, com feriados nacionais e tipo de dia.
+    columns:
+      - name: data
+        data_tests: [unique, not_null]
+      - name: tipo_dia
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Dia útil", "Fim de semana", "Feriado", "Ponto facultativo"]
+
+  - name: dim_subsistema
+    columns:
+      - name: id_subsistema
+        data_tests: [unique, not_null]
+
+  - name: fato_carga_horaria
+    description: Fato do modelo estrela, uma linha por subsistema e hora.
+    columns:
+      - name: data
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_calendario')
+                field: data
+      - name: id_subsistema
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_subsistema')
+                field: id_subsistema
+
+  - name: agg_carga_mensal
+    description: Energia mensal por subsistema, com crescimento sobre o ano anterior.
+  - name: agg_sin_horario
+    description: Carga do SIN (soma dos subsistemas) hora a hora.
+  - name: agg_perfil_horario
+    description: Curva típica do dia por tipo de dia e ano.
+  - name: agg_picos_sin
+    description: As 10 horas de maior carga do SIN em cada ano.

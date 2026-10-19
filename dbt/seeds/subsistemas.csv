@@ -1,0 +1,5 @@
+id_subsistema,nome,regiao,estados
+N,Norte,Norte,"AM, AP, PA, TO, MA (parte), RR"
+NE,Nordeste,Nordeste,"AL, BA, CE, PB, PE, PI, RN, SE"
+S,Sul,Sul,"PR, RS, SC, MS (parte)"
+SE,Sudeste/Centro-Oeste,Sudeste e Centro-Oeste,"ES, MG, RJ, SP, DF, GO, MT, MS, AC, RO"
