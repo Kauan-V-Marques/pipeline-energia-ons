@@ -1,0 +1,30 @@
+table dSubsistema
+
+	column id_subsistema
+		dataType: string
+		summarizeBy: none
+		sourceColumn: id_subsistema
+
+	column nome
+		dataType: string
+		summarizeBy: none
+		sourceColumn: nome
+
+	column regiao
+		dataType: string
+		summarizeBy: none
+		sourceColumn: regiao
+
+	column estados
+		dataType: string
+		summarizeBy: none
+		sourceColumn: estados
+
+	partition dSubsistema = m
+		mode: import
+		source =
+				let
+				    Arquivo = Web.Contents(UrlDados, [RelativePath = "dim_subsistema.parquet"]),
+				    Tabela = Parquet.Document(Binary.Buffer(Arquivo))
+				in
+				    Tabela

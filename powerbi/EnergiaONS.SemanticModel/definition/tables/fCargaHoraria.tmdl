@@ -1,0 +1,87 @@
+table fCargaHoraria
+
+	/// Energia consumida: cada hora em MWmed equivale a MWh
+	measure 'Energia (GWh)' = DIVIDE ( SUM ( fCargaHoraria[carga_mwmed] ), 1000 )
+		formatString: #,0.0
+		displayFolder: Energia
+
+	/// Média das cargas horárias (soma dos subsistemas filtrados em cada hora)
+	measure 'Carga média (MWmed)' = AVERAGEX ( VALUES ( fCargaHoraria[data_hora] ), CALCULATE ( SUM ( fCargaHoraria[carga_mwmed] ) ) )
+		formatString: #,0
+		displayFolder: Potência
+
+	/// Maior carga horária no período
+	measure 'Demanda máxima (MW)' = MAXX ( VALUES ( fCargaHoraria[data_hora] ), CALCULATE ( SUM ( fCargaHoraria[carga_mwmed] ) ) )
+		formatString: #,0
+		displayFolder: Potência
+
+	/// Carga média dividida pela máxima: quanto mais perto de 100%, mais uniforme o consumo
+	measure 'Fator de carga' = DIVIDE ( [Carga média (MWmed)], [Demanda máxima (MW)] )
+		formatString: 0.0%
+		displayFolder: Potência
+
+	/// Mesma janela de datas, um ano antes
+	measure 'Energia ano anterior (GWh)' = CALCULATE ( [Energia (GWh)], SAMEPERIODLASTYEAR ( dCalendario[data] ) )
+		formatString: #,0.0
+		displayFolder: Energia
+
+	/// Variação da energia sobre o mesmo período do ano anterior
+	measure 'Crescimento anual %' = DIVIDE ( [Energia (GWh)] - [Energia ano anterior (GWh)], [Energia ano anterior (GWh)] )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Energia
+
+	/// Fatia do subsistema no total do SIN
+	measure 'Participação %' = DIVIDE ( [Energia (GWh)], CALCULATE ( [Energia (GWh)], ALL ( dSubsistema ) ) )
+		formatString: 0.0%
+		displayFolder: Energia
+
+	/// Horas sem medição na origem, preenchidas pelo pipeline
+	measure 'Horas estimadas' = CALCULATE ( COUNTROWS ( fCargaHoraria ), fCargaHoraria[imputado] = TRUE () )
+		formatString: #,0
+		displayFolder: Qualidade
+
+	column data
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: data
+		annotation UnderlyingDateTimeDataType = Date
+
+	column hora
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: hora
+
+	column data_hora
+		dataType: dateTime
+		formatString: dd/mm/yyyy hh:nn
+		summarizeBy: none
+		sourceColumn: data_hora
+
+	column id_subsistema
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: id_subsistema
+
+	column carga_mwmed
+		dataType: double
+		formatString: #,0.0
+		summarizeBy: sum
+		sourceColumn: carga_mwmed
+
+	column imputado
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: imputado
+
+	partition fCargaHoraria = m
+		mode: import
+		source =
+				let
+				    Arquivo = Web.Contents(UrlDados, [RelativePath = "fato_carga_horaria.parquet"]),
+				    Tabela = Parquet.Document(Binary.Buffer(Arquivo))
+				in
+				    Tabela

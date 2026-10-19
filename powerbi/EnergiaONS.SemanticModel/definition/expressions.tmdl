@@ -1,0 +1,4 @@
+/// Pasta com os arquivos Parquet gerados pelo pipeline (publicados no GitHub)
+expression UrlDados = "https://raw.githubusercontent.com/Kauan-V-Marques/pipeline-energia-ons/main/powerbi/dados/" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	annotation PBI_ResultType = Text
+

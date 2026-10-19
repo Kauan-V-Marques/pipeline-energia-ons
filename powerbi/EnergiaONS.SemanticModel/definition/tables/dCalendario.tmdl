@@ -1,0 +1,76 @@
+table dCalendario
+	dataCategory: Time
+
+	column data
+		dataType: dateTime
+		isKey
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: data
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ano
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: ano
+
+	column trimestre
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: trimestre
+
+	column mes
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: mes
+
+	column dia
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: dia
+
+	column dia_semana
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: dia_semana
+
+	column nome_mes
+		dataType: string
+		sortByColumn: mes
+		summarizeBy: none
+		sourceColumn: nome_mes
+
+	column ano_mes
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ano_mes
+
+	column nome_dia_semana
+		dataType: string
+		sortByColumn: dia_semana
+		summarizeBy: none
+		sourceColumn: nome_dia_semana
+
+	column feriado
+		dataType: string
+		summarizeBy: none
+		sourceColumn: feriado
+
+	column tipo_dia
+		dataType: string
+		summarizeBy: none
+		sourceColumn: tipo_dia
+
+	partition dCalendario = m
+		mode: import
+		source =
+				let
+				    Arquivo = Web.Contents(UrlDados, [RelativePath = "dim_calendario.parquet"]),
+				    Tabela = Parquet.Document(Binary.Buffer(Arquivo))
+				in
+				    Tabela

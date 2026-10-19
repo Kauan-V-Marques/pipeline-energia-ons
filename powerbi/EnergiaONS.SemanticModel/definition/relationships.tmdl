@@ -1,0 +1,8 @@
+relationship fCargaHoraria_dCalendario
+	fromColumn: fCargaHoraria.data
+	toColumn: dCalendario.data
+
+relationship fCargaHoraria_dSubsistema
+	fromColumn: fCargaHoraria.id_subsistema
+	toColumn: dSubsistema.id_subsistema
+
