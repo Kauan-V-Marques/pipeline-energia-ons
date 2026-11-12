@@ -1,9 +1,30 @@
-# Pipeline de Dados: Carga de Energia do Brasil
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0D1117,50:1F6FEB,100:58A6FF&height=110&section=header" alt="" width="100%">
+</p>
 
-![Pipeline](https://github.com/Kauan-V-Marques/pipeline-energia-ons/actions/workflows/pipeline.yml/badge.svg)
-![dbt](https://img.shields.io/badge/dbt-DuckDB-FF694B?logo=dbt&logoColor=white)
-![Power BI](https://img.shields.io/badge/Power%20BI-TMDL-F2C811?logo=powerbi&logoColor=black)
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+<h1 align="center">Pipeline de Dados: Carga de Energia do Brasil</h1>
+
+<p align="center"><b>Dados abertos do ONS · Python · dbt · DuckDB · Power BI</b></p>
+
+<p align="center">
+  <a href="https://github.com/Kauan-V-Marques/pipeline-energia-ons/actions/workflows/pipeline.yml"><img src="https://github.com/Kauan-V-Marques/pipeline-energia-ons/actions/workflows/pipeline.yml/badge.svg" alt="Pipeline"></a>
+  <img src="https://img.shields.io/badge/dbt-DuckDB-FF694B?logo=dbt&logoColor=white" alt="dbt">
+  <img src="https://img.shields.io/badge/Power%20BI-TMDL-F2C811?logo=powerbi&logoColor=black" alt="Power BI">
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python">
+</p>
+
+<p align="center">
+  <a href="https://kauan-v-marques.github.io/pipeline-energia-ons/"><b>Abrir o relatório</b></a> ·
+  <a href="#arquitetura">Arquitetura</a> ·
+  <a href="#o-que-os-testes-de-qualidade-encontraram">O que os testes de qualidade encontraram</a> ·
+  <a href="#alguns-resultados">Alguns resultados</a> ·
+  <a href="#power-bi">Power BI</a> ·
+  <a href="#como-rodar">Como rodar</a> ·
+  <a href="#testes">Testes</a> ·
+  <a href="#créditos-dos-dados">Créditos dos dados</a>
+</p>
+
+---
 
 Pipeline de **engenharia de dados** que coleta a carga de energia elétrica hora a hora do Sistema Interligado Nacional (dados abertos do ONS), trata e testa a qualidade com **dbt + DuckDB**, monta um **modelo estrela** e entrega o resultado em dois formatos:
 
@@ -115,3 +136,15 @@ dbt docs generate --profiles-dir . && dbt docs serve --profiles-dir .
 An **ELT pipeline** over 10 years of hourly load data from Brazil's grid operator (ONS, CC-BY): Python extraction, **dbt + DuckDB** staging and star-schema marts, 25 data-quality checks (which caught a zero reading on the 2018 daylight-saving transition, now handled as a gap), Parquet exports feeding a **Power BI semantic model in TMDL** (DAX measures, validated with Microsoft's TOM library in CI) and a Plotly web report published on GitHub Pages and refreshed monthly by a scheduled GitHub Actions run.
 
 </details>
+
+---
+
+<p align="center">
+  Feito por <a href="https://github.com/Kauan-V-Marques"><b>Kauan Victor Marques</b></a> ·
+  <a href="https://kauan-v-marques.github.io/curriculo/">Currículo</a> ·
+  <a href="https://github.com/Kauan-V-Marques?tab=repositories">Mais projetos</a>
+</p>
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0D1117,50:1F6FEB,100:58A6FF&height=80&section=footer" alt="" width="100%">
+</p>
